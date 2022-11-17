@@ -44,7 +44,7 @@ router.get('/sub', verifyToken, sub);
 // get video by a tag
 router.get('/tags', getByTag);
 
-// get search keywords
+// get video by title
 router.get('/search', search);
 
 export default router;

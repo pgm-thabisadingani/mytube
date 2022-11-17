@@ -65,6 +65,7 @@ export const deleteVideo = async (req, res, next) => {
 export const addView = async (req, res, next) => {
   try {
     await Video.findByIdAndUpdate(req.params.id, {
+      // increase by 1 using property (views)
       $inc: { views: 1 },
     });
     res.status(200).json('The view has been increased.');
@@ -76,7 +77,7 @@ export const addView = async (req, res, next) => {
 // TRENDING VIDEO FUNCTION (VIDEO)
 export const trend = async (req, res, next) => {
   try {
-    // zero views
+    // this will bring the most viewed video (-1) while (1) is the less viewed videos
     const videos = await Video.find().sort({ views: -1 });
     res.status(200).json(videos);
   } catch (err) {
@@ -87,6 +88,7 @@ export const trend = async (req, res, next) => {
 // RADOM VIDEO FUNCTION
 export const random = async (req, res, next) => {
   try {
+    // aggregate is a mongo db method, this will return 40 random videos
     const videos = await Video.aggregate([{ $sample: { size: 40 } }]);
     res.status(200).json(videos);
   } catch (err) {
@@ -98,14 +100,18 @@ export const random = async (req, res, next) => {
 export const sub = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
+    // fint subscribed channels
     const subscribedChannels = user.subscribedUsers;
 
+    // promise return not only one channel but all channels
     const list = await Promise.all(
       subscribedChannels.map(async (channelId) => {
+        // if userId equals to channelId
         return await Video.find({ userId: channelId });
       })
     );
 
+    // javaScript (flat) method is to prevent getting an nested array from [[{}]] to [{}]
     res.status(200).json(list.flat().sort((a, b) => b.createdAt - a.createdAt));
   } catch (err) {
     next(err);
@@ -114,8 +120,10 @@ export const sub = async (req, res, next) => {
 
 // VIDEO-BY-ID  FUNCTION
 export const getByTag = async (req, res, next) => {
+  // use the express tag and separate them using Js split method
   const tags = req.query.tags.split(',');
   try {
+    // look tag array, then using ($in method) you check if a certain tag is there of not (tags)
     const videos = await Video.find({ tags: { $in: tags } }).limit(20);
     res.status(200).json(videos);
   } catch (err) {
@@ -125,8 +133,11 @@ export const getByTag = async (req, res, next) => {
 
 // VIDE SEARCH FUNCTION
 export const search = async (req, res, next) => {
+  // query: videos/search?q=TH
   const query = req.query.q;
   try {
+    //$regex: is for any key letter of words that match the title,
+    //$options: 'i': prevent string case sensitivity (upper or lower case)
     const videos = await Video.find({
       title: { $regex: query, $options: 'i' },
     }).limit(40);

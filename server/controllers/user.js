@@ -100,6 +100,7 @@ export const like = async (req, res, next) => {
   const videoId = req.params.videoId;
   try {
     await Video.findByIdAndUpdate(videoId, {
+      // $addToSet : makes sure that your id is on the array only once, prevents duplication
       $addToSet: { likes: id },
       $pull: { dislikes: id },
     });
@@ -115,8 +116,9 @@ export const dislike = async (req, res, next) => {
   const videoId = req.params.videoId;
   try {
     await Video.findByIdAndUpdate(videoId, {
-      $addToSet: { likes: id },
-      $pull: { dislikes: id },
+      //  $pull : removes your id from likes and  $addToSet: add to dislike
+      $addToSet: { dislikes: id },
+      $pull: { likes: id },
     });
     res.status(200).json('The video has been liked.');
   } catch (err) {
