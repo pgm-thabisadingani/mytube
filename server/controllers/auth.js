@@ -52,3 +52,39 @@ export const signin = async (req, res, next) => {
     next(err);
   }
 };
+
+/*GOOGLE SIGN IN*/
+export const googleAuth = async (req, res, next) => {
+  try {
+    // find/check the user using mongo db method findOne(email adress) if the user alredy has an account
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT);
+      res
+        .cookie('access_token', token, {
+          httpOnly: true,
+        })
+        .status(200)
+        .json(user._doc);
+    } else {
+      const newUser = new User({
+        ...req.body,
+        //user model/schema key: value
+        fromGoogle: true,
+      });
+      //save the user
+      const savedUser = await newUser.save();
+      // create a token and send the user
+      const token = jwt.sign({ id: savedUser._id }, process.env.JWT);
+      res
+        .cookie('access_token', token, {
+          httpOnly: true,
+        })
+        .status(200)
+        // nother ...rest but _doc
+        .json(savedUser._doc);
+    }
+  } catch (err) {
+    next(err);
+  }
+};

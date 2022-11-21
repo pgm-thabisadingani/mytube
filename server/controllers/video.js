@@ -4,7 +4,7 @@ import Video from './../models/Video.js';
 
 // CREATE A VIDEO FUNCTION
 export const addVideo = async (req, res, next) => {
-  const newVideo = new Video({ userId: req.params.id, ...req.body });
+  const newVideo = new Video({ userId: req.user.id, ...req.body });
   try {
     const saveVideo = await newVideo.save();
     res.status(200).json(saveVideo);
@@ -100,7 +100,7 @@ export const random = async (req, res, next) => {
 export const sub = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
-    // fint subscribed channels
+    // find subscribed channels
     const subscribedChannels = user.subscribedUsers;
 
     // promise return not only one channel but all channels
@@ -118,7 +118,7 @@ export const sub = async (req, res, next) => {
   }
 };
 
-// VIDEO-BY-ID  FUNCTION
+// VIDEO-BY-TAG  FUNCTION
 export const getByTag = async (req, res, next) => {
   // use the express tag and separate them using Js split method
   const tags = req.query.tags.split(',');
@@ -131,7 +131,7 @@ export const getByTag = async (req, res, next) => {
   }
 };
 
-// VIDE SEARCH FUNCTION
+// VIDEO SEARCH FUNCTION
 export const search = async (req, res, next) => {
   // query: videos/search?q=TH
   const query = req.query.q;

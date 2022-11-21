@@ -17,17 +17,22 @@ const UserSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
+      // required: true,
     },
     img: {
       type: String,
     },
-    subscribes: {
+    subscribers: {
       type: Number,
       default: 0,
     },
     subscribedUsers: {
       type: [String],
+    },
+    //sign in with google account
+    fromGoogle: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

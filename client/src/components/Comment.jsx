@@ -1,4 +1,5 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -36,19 +37,25 @@ const Text = styled.p`
   font-size: 14px;
 `;
 
-const Comment = () => {
+const Comment = ({ comment }) => {
+  const [channel, setChannel] = useState({});
+
+  useEffect(() => {
+    const fetchComment = async () => {
+      const res = await axios.get(`/users/find/${comment.userId}`);
+      setChannel(res.data);
+    };
+    fetchComment();
+  }, [comment.userId]);
+
   return (
     <Container>
-      <Image src="https://cdn.pixabay.com/photo/2022/09/16/13/07/woman-7458584_960_720.jpg" />
+      <Image src={channel.img} />
       <Details>
         <Name>
-          Ossama Bin
-          <Date> 4 months ago</Date>
+          {channel.name} <Date>1 day ago</Date>
         </Name>
-        <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam ab culpa
-          maxime architecto.
-        </Text>
+        <Text>{comment.desc}</Text>
       </Details>
     </Container>
   );

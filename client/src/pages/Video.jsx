@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 import AddTaskOutlinedIcon from '@mui/icons-material/AddTaskOutlined';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import styled from 'styled-components';
-import { Card, Comments } from '../components';
+import { Card, Comments, Recommendation } from '../components';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { dislike, fetchSuccess, like } from '../redux/videoSlice';
+import { format } from 'timeago.js';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import { subscription } from '../redux/userSlice';
 
 const Container = styled.div`
   display: flex;
@@ -31,6 +39,12 @@ const Details = styled.div`
   justify-content: space-between;
 `;
 
+const ChannelDetail = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: ${({ theme }) => theme.text};
+`;
+
 const Info = styled.span`
   color: ${({ theme }) => theme.textSoft};
 `;
@@ -46,10 +60,6 @@ const Button = styled.div`
   align-items: center;
   gap: 5px;
   cursor: pointer;
-`;
-
-const Recommendation = styled.div`
-  flex: 2;
 `;
 
 const Hr = styled.hr`
@@ -72,12 +82,6 @@ const Image = styled.img`
   object-fit: cover;
   border-radius: 50%;
 `;
-const ChannelDetails = styled.div`
-  display: flex;
-  flex-direction: column;
-  color: ${({ theme }) => theme.text};
-  gap: 5px;
-`;
 const ChannelName = styled.span`
   font-weight: 500;
 `;
@@ -88,6 +92,12 @@ const ChannelCounter = styled.span`
 `;
 const Description = styled.p`
   font-size: 14px;
+`;
+
+const VideoFrame = styled.video`
+  max-height: 720px;
+  width: 100%;
+  object-fit: cover;
 `;
 
 const Subscribe = styled.button`
@@ -102,29 +112,79 @@ const Subscribe = styled.button`
 `;
 
 const Video = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const { currentVideo } = useSelector((state) => state.video);
+  const dispatch = useDispatch();
+
+  //   console.log(currentVideo);
+
+  //split the path to get the second part of the url
+  const path = useLocation().pathname.split('/')[2];
+
+  //   const [video, setVideo] = useState({});
+  const [channel, setChannel] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const videoRes = await axios.get(`/videos/find/${path}`);
+        const channelRes = await axios.get(
+          `/users/find/${videoRes.data.userId}`
+        );
+
+        setChannel(channelRes.data);
+        // update video state
+        dispatch(fetchSuccess(videoRes.data));
+      } catch (err) {}
+    };
+    fetchData();
+  }, [path, dispatch]);
+
+  // add like to video
+  const handleLike = async () => {
+    await axios.put(`/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id));
+  };
+  // add dislike to video
+  const handleDislike = async () => {
+    await axios.put(`/users/dislike/${currentVideo._id}`);
+    dispatch(dislike(currentUser._id));
+  };
+
+  const handleSubscribe = async () => {
+    currentUser.subscribedUsers.includes(channel._id)
+      ? await axios.put(`/users/unsub/${channel._id}`)
+      : await axios.put(`/users/sub/${channel._id}`);
+    dispatch(subscription(channel._id));
+  };
+
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <iframe
-            width="100%"
-            height="720"
-            src="https://www.youtube.com/embed/k3Vfj-e1Ma4"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+          <VideoFrame src={currentVideo?.videoUrl} controls />
         </VideoWrapper>
-        <Title>Test Video</Title>
+        <Title>{currentVideo.title}</Title>
         <Details>
-          <Info>7,948,154 views • Jun 22, 2022</Info>
+          <Info>
+            {currentVideo?.views} views • {format(currentVideo.createdAt)}
+          </Info>
           <Buttons>
-            <Button>
-              <ThumbUpOutlinedIcon /> 123
+            <Button onClick={handleLike}>
+              {currentVideo.likes?.includes(currentUser?._id) ? (
+                <ThumbUpIcon />
+              ) : (
+                <ThumbUpOutlinedIcon />
+              )}
+              {currentVideo.likes?.length}
             </Button>
-            <Button>
-              <ThumbDownOffAltOutlinedIcon /> Dislike
+            <Button onClick={handleDislike}>
+              {currentVideo.dislikes?.includes(currentUser?._id) ? (
+                <ThumbDownIcon />
+              ) : (
+                <ThumbDownOffAltOutlinedIcon />
+              )}
+              Dislike
             </Button>
             <Button>
               <ReplyOutlinedIcon /> Share
@@ -137,33 +197,24 @@ const Video = () => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src="https://cdn.pixabay.com/photo/2022/09/16/13/07/woman-7458584_960_720.jpg" />
-            <ChannelDetails>
-              <ChannelName>Code Dave</ChannelName>
-              <ChannelCounter>30k subscribers</ChannelCounter>
-              <Description>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos
-                dolor dicta maxime earum voluptatibus, error quas, aliquid iure
-                expedita quod ullam veniam dignissimos nobis debitis! Sapiente
-                tempora molestiae expedita exercitationem.
-              </Description>
-            </ChannelDetails>
+            <Image src={channel.img} />
+            <ChannelDetail>
+              <ChannelName>{channel?.name}</ChannelName>
+              <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
+              <Description>{currentVideo.desc}</Description>
+            </ChannelDetail>
           </ChannelInfo>
-          <Subscribe>Subscribe</Subscribe>
+          <Subscribe onClick={handleSubscribe}>
+            {/* means i have subscribed to ths channel */}
+            {currentUser.subscribedUsers?.includes(channel._id)
+              ? 'SUBSCRIBED'
+              : 'SUBSCRIBE'}
+          </Subscribe>
         </Channel>
         <Hr />
-        <Comments />
+        <Comments videoId={currentVideo?._id} />
       </Content>
-      <Recommendation>
-        <Card type="sm" />
-        <Card type="sm" />
-        <Card type="sm" />
-        <Card type="sm" />
-        <Card type="sm" />
-        <Card type="sm" />
-        <Card type="sm" />
-        <Card type="sm" />
-      </Recommendation>
+      <Recommendation tags={currentVideo.tags} />
     </Container>
   );
 };

@@ -19,6 +19,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SettingsBrightnessOutlinedIcon from '@mui/icons-material/SettingsBrightnessOutlined';
+import { useSelector } from 'react-redux';
 
 const Container = styled.div`
   position: sticky;
@@ -28,6 +29,11 @@ const Container = styled.div`
   height: 100vh;
   color: ${({ theme }) => theme.text};
   font-size: 14px;
+  overflow: scroll;
+  /* hide the scrollbar */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Wrapper = styled.div`
@@ -88,6 +94,10 @@ const Title = styled.h2`
 `;
 
 const Menu = ({ setDarkMode, darkMode }) => {
+  //useSelector : Reading data from the store (payload)
+  //state.user : storage.user.currentUser (destructuring)
+  const { currentUser } = useSelector((state) => state.user);
+
   return (
     <Container>
       <Wrapper>
@@ -120,16 +130,21 @@ const Menu = ({ setDarkMode, darkMode }) => {
           History
         </Item>
         <Hr />
-        <Login>
-          Sign in to like videos, comment and subscribe.
-          <Link to="/singin" style={{ textDecoration: 'none' }}>
-            <Button>
-              <AccountCircleOutlinedIcon />
-              SIGN IN
-            </Button>
-          </Link>
-        </Login>
-        <Hr />
+        {!currentUser && (
+          <>
+            <Login>
+              Sign in to like videos, comment and subscribe.
+              <Link to="/singin" style={{ textDecoration: 'none' }}>
+                <Button>
+                  <AccountCircleOutlinedIcon />
+                  SIGN IN
+                </Button>
+              </Link>
+            </Login>
+
+            <Hr />
+          </>
+        )}
         <Title>Best of MyTube</Title>
         <Item>
           <LibraryMusicOutlinedIcon />

@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-// user schema
-
 const VideoSchema = new mongoose.Schema(
   {
     userId: {

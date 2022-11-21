@@ -60,7 +60,7 @@ export const getUser = async (req, res, next) => {
 export const subscribe = async (req, res, next) => {
   try {
     //jwt user id
-    await User.findById(req.user.id, {
+    await User.findByIdAndUpdate(req.user.id, {
       // channel id use a push method to at the user id to subscribedUsers array on the user model
       $push: { subscribedUsers: req.params.id },
     });
@@ -79,7 +79,7 @@ export const subscribe = async (req, res, next) => {
 export const unsubscribe = async (req, res, next) => {
   try {
     //jwt user id
-    await User.findById(req.user.id, {
+    await User.findByIdAndUpdate(req.user.id, {
       // channel id use a pull method to at the user id to subscribedUsers array on the user model
       $pull: { subscribedUsers: req.params.id },
     });

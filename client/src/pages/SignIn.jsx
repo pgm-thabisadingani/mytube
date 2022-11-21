@@ -1,5 +1,13 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+
+// useDispatch: dispatch actions from the store
+import { useDispatch } from 'react-redux';
+import { loginStart, loginSuccess, loginFailure } from '../redux/userSlice';
+import { auth, provider } from '../firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 const Container = styled.div`
   display: flex;
@@ -61,19 +69,87 @@ const Link = styled.span`
 `;
 
 const SignIn = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSignnp = async (e) => {
+    e.preventDefault(); // no refresh
+  };
+
+  const handleSignin = async (e) => {
+    e.preventDefault();
+
+    // out reducer fucntion
+    dispatch(loginStart());
+    try {
+      const res = await axios.post('/auth/signin', { name, password });
+
+      dispatch(loginSuccess(res.data));
+      navigate('/');
+    } catch (error) {
+      dispatch(loginFailure(error));
+    }
+  };
+
+  const handleSigninWithGoogle = async () => {
+    dispatch(loginStart());
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // add to mango db the google credetals
+        axios
+          .post('/auth/google', {
+            name: result.user.displayName,
+            email: result.user.email,
+            img: result.user.photoURL,
+          })
+          .then((res) => {
+            console.log(res);
+            dispatch(loginSuccess(res.data));
+            navigate('/');
+          });
+      })
+      .catch((error) => {
+        dispatch(loginFailure());
+      });
+  };
+
   return (
     <Container>
       <Wrapper>
         <Title>Sign In </Title>
         <SubTitle>to continue to MyTube</SubTitle>
-        <Input placeholder="username" />
-        <Input type="password" placeholder="password" />
-        <Button>Sign in</Button>
+        <Input
+          placeholder="username"
+          onChange={(e) => setName(e.target.value)}
+        />
+        <Input
+          type="password"
+          placeholder="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button onClick={handleSignin}>Sign in</Button>
         <Title>or</Title>
-        <Input placeholder="username" />
-        <Input type="email" placeholder="email" />
-        <Input type="password" placeholder="password" />
-        <Button>Sign up</Button>
+        <Button onClick={handleSigninWithGoogle}>Signin with Google</Button>
+        <Title>or</Title>
+        <Input
+          placeholder="username"
+          onChange={(e) => setName(e.target.value)}
+        />
+        <Input
+          type="email"
+          placeholder="email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          type="password"
+          placeholder="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button onClick={handleSignnp}>Sign up</Button>
       </Wrapper>
       <More>
         English(UK)

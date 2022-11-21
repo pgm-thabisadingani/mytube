@@ -2,12 +2,14 @@ import express from 'express';
 import {
   addVideo,
   addView,
+  deleteVideo,
   getByTag,
   getVideo,
   random,
   search,
   sub,
   trend,
+  updateVideo,
 } from '../controllers/video.js';
 import { verifyToken } from '../verifyToken.js';
 
@@ -21,10 +23,10 @@ This verifyToken function will act as a middlewre for our CRUD operation
 router.post('/', verifyToken, addVideo);
 
 //update a verified user (update an existing video)
-router.put('/:id', verifyToken, addVideo);
+router.put('/:id', verifyToken, updateVideo);
 
 //delete a video as a verified user
-router.delete('/:id', verifyToken, addVideo);
+router.delete('/:id', verifyToken, deleteVideo);
 
 //get a video with a speciafic endpoint eg: videos/find/12366
 router.get('/find/:id', getVideo);
