@@ -13,10 +13,16 @@ import { dislike, fetchSuccess, like } from '../redux/videoSlice';
 import { format } from 'timeago.js';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import { subscription } from '../redux/userSlice';
+import { device } from '../utils/BreakPoints';
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   gap: 24px;
+
+  @media ${device.laptop} {
+    flex-direction: row;
+  }
 `;
 
 const Content = styled.div`
@@ -35,8 +41,14 @@ const Title = styled.h1`
 
 const Details = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
+  gap: 10px;
+
+  @media ${device.laptop} {
+    flex-direction: row;
+    align-items: center;
+  }
 `;
 
 const ChannelDetail = styled.div`
@@ -164,22 +176,22 @@ const Video = () => {
         <VideoWrapper>
           <VideoFrame src={currentVideo?.videoUrl} controls />
         </VideoWrapper>
-        <Title>{currentVideo.title}</Title>
+        <Title>{currentVideo?.title}</Title>
         <Details>
           <Info>
-            {currentVideo?.views} views • {format(currentVideo.createdAt)}
+            {currentVideo?.views} views • {format(currentVideo?.createdAt)}
           </Info>
           <Buttons>
             <Button onClick={handleLike}>
-              {currentVideo.likes?.includes(currentUser?._id) ? (
+              {currentVideo?.likes?.includes(currentUser?._id) ? (
                 <ThumbUpIcon />
               ) : (
                 <ThumbUpOutlinedIcon />
               )}
-              {currentVideo.likes?.length}
+              {currentVideo?.likes?.length}
             </Button>
             <Button onClick={handleDislike}>
-              {currentVideo.dislikes?.includes(currentUser?._id) ? (
+              {currentVideo?.dislikes?.includes(currentUser?._id) ? (
                 <ThumbDownIcon />
               ) : (
                 <ThumbDownOffAltOutlinedIcon />
@@ -197,22 +209,24 @@ const Video = () => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src={channel.img} />
+            <Image src={channel?.img} />
             <ChannelDetail>
               <ChannelName>{channel?.name}</ChannelName>
-              <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
-              <Description>{currentVideo.desc}</Description>
+              <ChannelCounter>
+                {channel?.subscribers} subscribers
+              </ChannelCounter>
+              <Description>{currentVideo?.desc}</Description>
             </ChannelDetail>
           </ChannelInfo>
           <Subscribe onClick={handleSubscribe}>
             {/* means i have subscribed to ths channel */}
-            {currentUser.subscribedUsers?.includes(channel._id)
+            {currentUser?.subscribedUsers?.includes(channel?._id)
               ? 'SUBSCRIBED'
               : 'SUBSCRIBE'}
           </Subscribe>
         </Channel>
         <Hr />
-        <Comments videoId={currentVideo?._id} />
+        <Comments videoId={currentVideo._id} />
       </Content>
       <Recommendation tags={currentVideo.tags} />
     </Container>

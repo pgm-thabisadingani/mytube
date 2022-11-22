@@ -3,21 +3,31 @@ import styled from 'styled-components';
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { device } from '../utils/BreakPoints';
 
 const Container = styled.div`
-  width: ${(props) => props.type !== 'sm' && '360px'};
+  width: ${(props) => props.type !== 'sm' && '100%'};
   margin-bottom: ${(props) => (props.type === 'sm' ? '10px' : '45px')};
   cursor: pointer;
 
   display: ${(props) => props.type === 'sm' && 'flex'};
   gap: 10px;
+
+  @media ${device.laptop} {
+    width: ${(props) => props.type !== 'sm' && '360px'};
+  }
 `;
 
 const Image = styled.img`
   width: 100%;
   flex: 1;
-  height: ${(props) => (props.type === 'sm' ? '120px ' : '202px;')};
+  height: ${(props) => (props.type === 'sm' ? '120px ' : '100%')};
+
   background-color: #999999;
+
+  @media ${device.laptop} {
+    height: ${(props) => (props.type === 'sm' ? '120px ' : '202px;')};
+  }
 `;
 
 const Details = styled.div`

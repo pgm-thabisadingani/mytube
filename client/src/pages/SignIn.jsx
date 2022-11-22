@@ -77,12 +77,21 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   const handleSignnp = async (e) => {
-    e.preventDefault(); // no refresh
+    e.preventDefault();
+    // out reducer fucntion
+    dispatch(loginStart());
+    try {
+      const res = await axios.post('/auth/signup', { name, email, password });
+
+      dispatch(loginSuccess(res.data));
+      navigate('/');
+    } catch (error) {
+      dispatch(loginFailure(error));
+    }
   };
 
   const handleSignin = async (e) => {
     e.preventDefault();
-
     // out reducer fucntion
     dispatch(loginStart());
     try {

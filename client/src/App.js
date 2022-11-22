@@ -7,7 +7,8 @@ import { darkTheme, lightTheme } from './utils/Theme';
 import { useSelector } from 'react-redux';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home, SignIn, Video } from './pages';
+import { Home, Search, SignIn, Video } from './pages';
+import { device } from './utils/BreakPoints';
 
 const Container = styled.div`
   display: flex;
@@ -19,7 +20,18 @@ const Main = styled.div`
   color: ${({ theme }) => theme.text};
 `;
 const Wrapper = styled.div`
-  padding: 22px 96px;
+  padding: 22px 20px 22px 0px;
+
+  @media ${device.tablet} {
+    padding: 22px 56px 22px 0px;
+  }
+  @media ${device.laptop} {
+    padding: 22px 56px;
+  }
+
+  @media ${device.desktop} {
+    padding: 22px 56px;
+  }
 `;
 
 function App() {
@@ -40,6 +52,7 @@ function App() {
                   <Route index element={<Home type="random" />} />
                   <Route path="trends" element={<Home type="trend" />} />
                   <Route path="subscriptions" element={<Home type="sub" />} />
+                  <Route path="search" element={<Search />} />
                   <Route
                     path="singin"
                     element={currentUser ? <Home /> : <SignIn />}

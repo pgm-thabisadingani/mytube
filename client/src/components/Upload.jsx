@@ -9,6 +9,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
+import { device } from '../utils/BreakPoints';
 
 const Container = styled.div`
   width: 100%;
@@ -17,13 +18,13 @@ const Container = styled.div`
   top: 0;
   left: 0;
   background-color: #000000a7;
-  z-index: 1000;
+  z-index: 100000;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 const Wrapper = styled.div`
-  width: 600px;
+  width: 300px;
   height: 600px;
   padding: 20px;
   display: flex;
@@ -32,6 +33,10 @@ const Wrapper = styled.div`
   position: relative;
   background-color: ${({ theme }) => theme.bgLighter};
   color: ${({ theme }) => theme.text};
+
+  @media ${device.tablet} {
+    width: 600px;
+  }
 `;
 const Close = styled.div`
   position: absolute;
@@ -49,7 +54,7 @@ const Input = styled.input`
   border-radius: 3px;
   padding: 10px;
   background-color: transparent;
-  z-index: 999;
+  z-index: 999999;
 `;
 
 const Button = styled.button`
