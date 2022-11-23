@@ -146,7 +146,7 @@ const Title = styled.h2`
 const Close = styled.div`
   position: absolute;
   right: 0;
-
+  cursor: pointer;
   font-size: 20px;
   @media ${device.laptop} {
     display: none;
@@ -174,19 +174,26 @@ const Menu = ({ setDarkMode, darkMode }) => {
       </Open>
       <Container openMenu={openMenu}>
         <Wrapper>
-          <Link
-            to="/"
-            style={{ textDecoration: 'none', color: 'inherit' }}
-            onClick={() => setOpenMenu(false)}
-          >
-            <Logo>
+          <Logo>
+            <Link
+              to="/"
+              style={{
+                textDecoration: 'none',
+                color: 'inherit',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+              }}
+              onClick={() => setOpenMenu(false)}
+            >
               <Img src={MyTube} alt="logo" />
               MyTube
-              <Close onClick={() => setOpenMenu(!openMenu)}>
-                <MenuOutlinedIcon />
-              </Close>
-            </Logo>
-          </Link>
+            </Link>
+            <Close onClick={() => setOpenMenu(!openMenu)}>
+              <MenuOutlinedIcon />
+            </Close>
+          </Logo>
+
           <Link
             to="/"
             style={{ textDecoration: 'none', color: 'inherit' }}

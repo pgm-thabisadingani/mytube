@@ -18,6 +18,7 @@ const Main = styled.div`
   background-color: #181818;
   background-color: ${({ theme }) => theme.bg};
   color: ${({ theme }) => theme.text};
+  /* height: 100vh; */
 `;
 const Wrapper = styled.div`
   padding: 22px 20px 22px 0px;
