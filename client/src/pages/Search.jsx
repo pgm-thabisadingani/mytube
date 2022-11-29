@@ -14,9 +14,11 @@ const Search = () => {
   const [videos, setVideos] = useState([]);
   const query = useLocation().search;
 
+  const URL = 'https://mytube-api.onrender.com/api';
+
   useEffect(() => {
     const fetchVideos = async () => {
-      const res = await axios.get(`/videos/search${query}`);
+      const res = await axios.get(`${URL}/videos/search${query}`);
       setVideos(res.data);
       console.log(res.data);
     };

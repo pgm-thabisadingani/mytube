@@ -82,6 +82,8 @@ const Upload = ({ setOpen }) => {
   const [img, setImg] = useState(undefined);
   const [video, setVideo] = useState(undefined);
 
+  const URL = 'https://mytube-api.onrender.com/api';
+
   // show upload %
   const [imgPerc, setImgPerc] = useState(0);
   const [videoPerc, setVideoPerc] = useState(0);
@@ -159,7 +161,10 @@ const Upload = ({ setOpen }) => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    const res = await axios.post('/videos', { ...inputs, tags });
+    const res = await axios.post(`${URL}/videos`, {
+      ...inputs,
+      tags,
+    });
     setOpen(false);
     res.status === 200 && navigate(`/video/${res.data._id}`);
   };

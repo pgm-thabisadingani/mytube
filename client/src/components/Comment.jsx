@@ -40,9 +40,11 @@ const Text = styled.p`
 const Comment = ({ comment }) => {
   const [channel, setChannel] = useState({});
 
+  const URL = 'https://mytube-api.onrender.com/api';
+
   useEffect(() => {
     const fetchComment = async () => {
-      const res = await axios.get(`/users/find/${comment.userId}`);
+      const res = await axios.get(`${URL}/users/find/${comment.userId}`);
       setChannel(res.data);
     };
     fetchComment();

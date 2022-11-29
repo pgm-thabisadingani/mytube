@@ -2,6 +2,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 //routes
 import userRoutes from './routes/users.js';
@@ -27,6 +28,7 @@ const connect = () => {
 };
 
 //middlewares
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
@@ -45,21 +47,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.use(express.static(path.join(__dirname, './client/build')));
-
-app.get('*', function (_, res) {
-  res.sendFile(
-    path.join(__dirname, './client/build/index.html'),
-    function (err) {
-      if (err) {
-        res.status(500).send(err);
-      }
-    }
-  );
-});
-
 // port to listen to
-app.listen(8800, () => {
+app.listen(process.env.PORT || 8080, () => {
   connect();
   console.log('conected to server');
 });

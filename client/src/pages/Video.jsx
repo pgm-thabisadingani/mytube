@@ -129,6 +129,7 @@ const Video = () => {
   const dispatch = useDispatch();
 
   //   console.log(currentVideo);
+  const URL = 'https://mytube-api.onrender.com/api';
 
   //split the path to get the second part of the url
   const path = useLocation().pathname.split('/')[2];
@@ -139,9 +140,10 @@ const Video = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const videoRes = await axios.get(`/videos/find/${path}`);
+        const videoRes = await axios.get(`${URL}/videos/find/${path}`);
+
         const channelRes = await axios.get(
-          `/users/find/${videoRes.data.userId}`
+          `${URL}/users/find/${videoRes.data.userId}`
         );
 
         setChannel(channelRes.data);
@@ -154,19 +156,19 @@ const Video = () => {
 
   // add like to video
   const handleLike = async () => {
-    await axios.put(`/users/like/${currentVideo._id}`);
-    dispatch(like(currentUser._id));
+    await axios.put(`${URL}/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser?._id));
   };
   // add dislike to video
   const handleDislike = async () => {
-    await axios.put(`/users/dislike/${currentVideo._id}`);
+    await axios.put(`${URL}/users/dislike/${currentVideo._id}`);
     dispatch(dislike(currentUser._id));
   };
 
   const handleSubscribe = async () => {
-    currentUser.subscribedUsers.includes(channel._id)
-      ? await axios.put(`/users/unsub/${channel._id}`)
-      : await axios.put(`/users/sub/${channel._id}`);
+    currentUser.subscribedUsers.includes(channel?._id)
+      ? await axios.put(`${URL}/users/unsub/${channel._id}`)
+      : await axios.put(`${URL}/users/sub/${channel._id}`);
     dispatch(subscription(channel._id));
   };
 
@@ -183,15 +185,15 @@ const Video = () => {
           </Info>
           <Buttons>
             <Button onClick={handleLike}>
-              {currentVideo?.likes?.includes(currentUser?._id) ? (
+              {currentVideo?.likes.includes(currentUser?._id) ? (
                 <ThumbUpIcon />
               ) : (
                 <ThumbUpOutlinedIcon />
               )}
-              {currentVideo?.likes?.length}
+              {currentVideo?.likes.length}
             </Button>
             <Button onClick={handleDislike}>
-              {currentVideo?.dislikes?.includes(currentUser?._id) ? (
+              {currentVideo?.dislikes.includes(currentUser?._id) ? (
                 <ThumbDownIcon />
               ) : (
                 <ThumbDownOffAltOutlinedIcon />
@@ -226,9 +228,9 @@ const Video = () => {
           </Subscribe>
         </Channel>
         <Hr />
-        <Comments videoId={currentVideo._id} />
+        <Comments videoId={currentVideo?._id} />
       </Content>
-      <Recommendation tags={currentVideo.tags} />
+      <Recommendation tags={currentVideo?.tags} />
     </Container>
   );
 };

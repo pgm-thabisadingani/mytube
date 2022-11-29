@@ -41,5 +41,4 @@
 
 ## Deployment
 
-- Heroku
-- Neftify
+- Render

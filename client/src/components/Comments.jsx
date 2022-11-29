@@ -30,10 +30,12 @@ const Comments = ({ videoId }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [comments, setComments] = useState([]);
 
+  const URL = 'https://mytube-api.onrender.com/api';
+
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const res = await axios.get(`/comments/${videoId}`);
+        const res = await axios.get(`${URL}/comments/${videoId}`);
         setComments(res.data);
       } catch (err) {}
     };

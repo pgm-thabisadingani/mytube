@@ -73,6 +73,8 @@ const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const URL = 'https://mytube-api.onrender.com/api';
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -81,7 +83,11 @@ const SignIn = () => {
     // out reducer fucntion
     dispatch(loginStart());
     try {
-      const res = await axios.post('/auth/signup', { name, email, password });
+      const res = await axios.post(`${URL}/auth/signup`, {
+        name,
+        email,
+        password,
+      });
 
       dispatch(loginSuccess(res.data));
       navigate('/');
@@ -95,7 +101,7 @@ const SignIn = () => {
     // out reducer fucntion
     dispatch(loginStart());
     try {
-      const res = await axios.post('/auth/signin', { name, password });
+      const res = await axios.post(`${URL}/auth/signin`, { name, password });
 
       dispatch(loginSuccess(res.data));
       navigate('/');
@@ -110,7 +116,7 @@ const SignIn = () => {
       .then((result) => {
         // add to mango db the google credetals
         axios
-          .post('/auth/google', {
+          .post(`${URL}/auth/google`, {
             name: result.user.displayName,
             email: result.user.email,
             img: result.user.photoURL,

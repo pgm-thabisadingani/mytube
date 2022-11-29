@@ -68,9 +68,11 @@ const Info = styled.p`
 const Card = ({ type, video }) => {
   const [channel, setChannel] = useState({});
 
+  const URL = 'https://mytube-api.onrender.com/api';
+
   useEffect(() => {
     const fetchChannel = async () => {
-      const res = await axios.get(`/users/find/${video.userId}`);
+      const res = await axios.get(`${URL}/users/find/${video.userId}`);
       setChannel(res.data);
     };
     fetchChannel();

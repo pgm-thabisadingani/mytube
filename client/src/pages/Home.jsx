@@ -11,10 +11,12 @@ const Container = styled.div`
 
 const Home = ({ type }) => {
   const [videos, setVideos] = useState([]);
+  const URL = 'https://mytube-api.onrender.com/api';
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const res = await axios.get(`/videos/${type}`);
+      const res = await axios.get(`${URL}/videos/${type}`);
+      console.log(res);
       setVideos(res.data);
     };
     fetchVideos();

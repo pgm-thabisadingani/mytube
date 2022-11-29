@@ -9,10 +9,13 @@ const Container = styled.div`
 
 const Recommendation = ({ tags }) => {
   const [videos, setVideos] = useState([]);
+
+  const URL = 'https://mytube-api.onrender.com/api';
+
   useEffect(() => {
     const fetchVideos = async () => {
       // Tag end point
-      const res = await axios.get(`/videos/tags?tags=${tags}`);
+      const res = await axios.get(`${URL}/videos/tags?tags=${tags}`);
       setVideos(res.data);
     };
     fetchVideos();
